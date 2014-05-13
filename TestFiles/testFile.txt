@@ -1,0 +1,42 @@
+NewGUID
+NewGUID
+
+NewFileGUID
+NewFileGUID
+
+NewFileGUID()
+NewFileGUID()
+
+NewFileGUID(a)
+NewFileGUID(a)
+
+NewFileGUID(b)
+NewFileGUID(b)
+
+NewConstGUID
+NewConstGUID
+
+NewConstGUID()
+NewConstGUID()
+
+NewConstGUID(a)
+NewConstGUID(a)
+
+NewConstGUID(b)
+NewConstGUID(b)
+
+DateShort
+DateLong
+TimeShort
+TimeLong
+
+DateTimeFormat
+DateTimeFormat()
+DateTimeFormat(yyyy)
+DateTimeFormat(yyyy-MM)
+DateTimeFormat(yyyy-MM-dd)
+
+ToUpper testString
+ToLower testString
+ToUpperChar testString
+ToLowerChar TESTSTRING
