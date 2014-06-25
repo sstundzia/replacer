@@ -42,7 +42,7 @@ namespace Replacer.Business.Engine
 						() => DateTime.Now.ToShortTimeString()),
 					new ReplacePatternSmartTag(
 						"TimeLong", "Replaces with a current time in long format.", SmartTagType.Constant,
-						() => DateTime.Now.ToShortTimeString()),
+						() => DateTime.Now.ToLongTimeString()),
 					new ReplacePatternSmartTag(
 						"DateTimeFormat", "Replaces with the current date and time in given format.", SmartTagType.Constant,
 						format => DateTime.Now.ToString(format)),
