@@ -1,16 +1,18 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows.Forms;
-
+using Replacer.Business.Crawler;
 using Replacer.Business.Engine;
+using Replacer.Business.JobRunners;
 
 namespace Replacer.GUI
 {
-	public partial class ProcessingForm : Form, IReplacerObserver
+	public partial class ProcessingForm : Form, IJobRunnerObserver
 	{
 		#region FIELDS
 
-		private Business.Engine.Replacer replacer;
+		private JobRunner runner;
 		private bool finished = true;
 	
 		private readonly BindingList<LogMessage> messageList = new BindingList<LogMessage>();
@@ -53,7 +55,15 @@ namespace Replacer.GUI
 		/// Gets or sets the replace parameters.
 		/// </summary>
 		/// <value>The replace parameters.</value>
-		public ReplaceParameters ReplaceParameters { get; set; }
+		public IEnumerable<ReplacePattern> ReplacePatterns { get; set; }
+
+        /// <summary>
+        /// Gets or sets the file crawler parameters.
+        /// </summary>
+        /// <value>
+        /// The file crawler parameters.
+        /// </value>
+        public FileCrawlerParameters FileCrawlerParameters { get; set; }
 
 		#endregion
 
@@ -95,15 +105,15 @@ namespace Replacer.GUI
 		/// </summary>
 		private void StartProcess()
 		{
-			// Initialize replacer:
-			this.replacer = new Business.Engine.Replacer();
-			this.replacer.AddObserver(this);
+			// Initialize runner:
+			this.runner = new JobRunner(this.FileCrawlerParameters, this.ReplacePatterns);
+			this.runner.AddObserver(this);
 			this.MarkUnfinished();
 
 			// Start process:
-			ReplaceDelegate action = this.replacer.Replace;
+			Action action = this.runner.Run;
 			AsyncCallback callback = this.Callback;
-			action.BeginInvoke(this.ReplaceParameters, callback, action);
+			action.BeginInvoke(callback, action);
 		}
 
 		/// <summary>
@@ -115,7 +125,7 @@ namespace Replacer.GUI
 			try
 			{
 				// End invoke:
-				ReplaceDelegate action = (ReplaceDelegate)result.AsyncState;
+				Action action = (Action)result.AsyncState;
 				action.EndInvoke(result);
 			}
 			catch (Exception exc)
@@ -133,8 +143,6 @@ namespace Replacer.GUI
 				this.MarkFinished();
 			}
 		}
-
-		private delegate void ReplaceDelegate(ReplaceParameters parameters);
 
 		#endregion
 
@@ -175,13 +183,13 @@ namespace Replacer.GUI
 
 		#endregion
 
-		#region IReplacerObserver MEMBERS
+        #region IJobRunnerObserver MEMBERS
 
-		/// <summary>
+        /// <summary>
 		/// Receives the log message.
 		/// </summary>
 		/// <param name="message">The message.</param>
-		void IReplacerObserver.ReceiveLogMessage(LogMessage message)
+		void IJobRunnerObserver.ReceiveLogMessage(LogMessage message)
 		{
 			this.AddMessage(message);
 		}
@@ -193,7 +201,7 @@ namespace Replacer.GUI
 		/// Files the processing.
 		/// </summary>
 		/// <param name="fileFullName">Full name of the file.</param>
-		void IReplacerObserver.FileProcessing(string fileFullName)
+		void IJobRunnerObserver.FileProcessing(string fileFullName)
 		{
 			this.fileProcessingStartTime = DateTime.Now;
 			this.processingMessage = new LogMessage();
@@ -212,7 +220,7 @@ namespace Replacer.GUI
 		/// <param name="sourceText">The source text.</param>
 		/// <param name="resultText">The result text.</param>
 		/// <returns>Whether file should be saved</returns>
-		bool IReplacerObserver.FileProcessed(string fileFullName, string sourceText, string resultText)
+		bool IJobRunnerObserver.FileProcessed(string fileFullName, string sourceText, string resultText)
 		{
 			DateTime time = DateTime.Now;
 			TimeSpan timeTaken = time - this.fileProcessingStartTime;
@@ -292,7 +300,7 @@ namespace Replacer.GUI
 			}
 			else
 			{
-				this.replacer.Cancel();
+				this.runner.Cancel();
 			}
 		}
 

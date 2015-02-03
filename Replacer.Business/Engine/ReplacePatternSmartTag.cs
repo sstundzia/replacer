@@ -83,8 +83,8 @@ namespace Replacer.Business.Engine
 				string result;
 				switch (this.Type)
 			    {
-				    case SmartTagType.Constant:
-					case SmartTagType.FileUnique:
+				    case SmartTagType.PerBatch:
+					case SmartTagType.PerFile:
 					    if (!this.valueCache.TryGetValue(options, out result))
 						    this.valueCache[options] = result = this.TagResult(contextMatch, options);
 					    break;
@@ -114,8 +114,8 @@ namespace Replacer.Business.Engine
 
 	public enum SmartTagType
 	{
-		Constant,
-		FileUnique,
-		MatchUnique
+		PerBatch,
+		PerFile,
+		PerMatch
 	}
 }

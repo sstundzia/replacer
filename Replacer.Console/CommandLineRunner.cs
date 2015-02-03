@@ -5,11 +5,12 @@ using System.Text;
 using System.Xml;
 using System.Xml.Serialization;
 using Replacer.Business;
-using Replacer.Business.Engine;
+using Replacer.Business.Crawler;
+using Replacer.Business.JobRunners;
 
 namespace Replacer.Console
 {
-	public class CommandLineRunner : IReplacerObserver
+	public class CommandLineRunner : IJobRunnerObserver
 	{
 		#region FIELDS
 
@@ -65,19 +66,13 @@ namespace Replacer.Console
 				}
 
 				// Process:
-				// Create replace parameters:
-				ReplaceParameters parameters = new ReplaceParameters
-				{
-					FileCrawlerParameters = {PathInfoList = project.FileFolderPaths.ToList()},
-					ReplacePatterns = project.PatternList.ToList()
-				};
-
-				// Initialize replacer:
-				Business.Engine.Replacer replacer = new Business.Engine.Replacer();
-				replacer.AddObserver(this);
+				// Initialize job runner:
+				FileCrawlerParameters fileCrawlerParameters = new FileCrawlerParameters{PathInfoList = project.FileFolderPaths.ToList()};
+			    JobRunner runner = new JobRunner(fileCrawlerParameters, project.PatternList);
+			    runner.AddObserver(this);
 
 				// Start process:
-				replacer.Replace(parameters);
+				runner.Run();
 			}
 			catch (Exception exc)
 			{
@@ -104,7 +99,7 @@ namespace Replacer.Console
 		/// Receives the log message.
 		/// </summary>
 		/// <param name="message">The message.</param>
-		void IReplacerObserver.ReceiveLogMessage(LogMessage message)
+		void IJobRunnerObserver.ReceiveLogMessage(LogMessage message)
 		{
 			this.Log(message);
 		}
@@ -118,7 +113,7 @@ namespace Replacer.Console
 		/// <returns>
 		/// Whether file should be saved
 		/// </returns>
-		bool IReplacerObserver.FileProcessed(string fileFullName, string sourceText, string resultText)
+		bool IJobRunnerObserver.FileProcessed(string fileFullName, string sourceText, string resultText)
 		{
 			DateTime time = DateTime.Now;
 			TimeSpan timeTaken = time - this.fileProcessingStartTime;
@@ -137,7 +132,7 @@ namespace Replacer.Console
 		/// Files the processing.
 		/// </summary>
 		/// <param name="fileFullName">Full name of the file.</param>
-		void IReplacerObserver.FileProcessing(string fileFullName)
+		void IJobRunnerObserver.FileProcessing(string fileFullName)
 		{
 			this.fileProcessingStartTime = DateTime.Now;
 		}

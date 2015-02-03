@@ -13,52 +13,52 @@ namespace Replacer.Business.Engine
 		/// <value>
 		/// The tags.
 		/// </value>
-		public static Dictionary<string, ReplacePatternSmartTag> Tags { get; set; }
+		public static Dictionary<string, ReplacePatternSmartTag> Tags { get; private set; }
 
 		static AllAvailableSmartTags()
 		{
 			List<ReplacePatternSmartTag> smartTags = new List<ReplacePatternSmartTag>
 				{
 					new ReplacePatternSmartTag(
-						"NewGUID", "Generates New GUID value for each match.", SmartTagType.MatchUnique,
+						"NewGUID", "Generates New GUID value for each match.", SmartTagType.PerMatch,
 						() => Guid.NewGuid().ToString()),
 					new ReplacePatternSmartTag(
 						"NewFileGUID",
 						"Generates new GUID value for each file (reusing same value for each match in the same file).",
-						SmartTagType.FileUnique,
+						SmartTagType.PerFile,
 						() => Guid.NewGuid().ToString()),
 					new ReplacePatternSmartTag(
 						"NewConstGUID", "Generates new GUID value for the whole processing of the pattern..",
-						SmartTagType.Constant,
+						SmartTagType.PerBatch,
 						() => Guid.NewGuid().ToString()),
 					new ReplacePatternSmartTag(
-						"DateShort", "Replaces with a current date in short format.", SmartTagType.Constant,
+						"DateShort", "Replaces with a current date in short format.", SmartTagType.PerBatch,
 						() => DateTime.Today.ToShortDateString()),
 					new ReplacePatternSmartTag(
-						"DateLong", "Replaces with a current date in long format.", SmartTagType.Constant,
+						"DateLong", "Replaces with a current date in long format.", SmartTagType.PerBatch,
 						() => DateTime.Today.ToLongDateString()),
 					new ReplacePatternSmartTag(
-						"TimeShort", "Replaces with a current time in short format.", SmartTagType.Constant,
+						"TimeShort", "Replaces with a current time in short format.", SmartTagType.PerBatch,
 						() => DateTime.Now.ToShortTimeString()),
 					new ReplacePatternSmartTag(
-						"TimeLong", "Replaces with a current time in long format.", SmartTagType.Constant,
+						"TimeLong", "Replaces with a current time in long format.", SmartTagType.PerBatch,
 						() => DateTime.Now.ToLongTimeString()),
 					new ReplacePatternSmartTag(
-						"DateTimeFormat", "Replaces with the current date and time in given format.", SmartTagType.Constant,
+						"DateTimeFormat", "Replaces with the current date and time in given format.", SmartTagType.PerBatch,
 						format => DateTime.Now.ToString(format)),
 					new ReplacePatternSmartTag(
-						"ToUpper", "Converts value of specified match group to ALL CAPS.", SmartTagType.MatchUnique,
+						"ToUpper", "Converts value of specified match group to ALL CAPS.", SmartTagType.PerMatch,
 						(context, options) => context.Groups[options].Value.ToUpper()),
 					new ReplacePatternSmartTag(
-						"ToLower", "Converts value of specified match group to \"all lowercase\".", SmartTagType.MatchUnique,
+						"ToLower", "Converts value of specified match group to \"all lowercase\".", SmartTagType.PerMatch,
 						(context, options) => context.Groups[options].Value.ToLower()),
 					new ReplacePatternSmartTag(
 						"ToUpperChar", "Converts specified chars from value of specified match group to UPPERCASE.",
-						SmartTagType.MatchUnique,
+						SmartTagType.PerMatch,
 						(context, options) => ToUpperChar(context, options, Char.ToUpper)),
 					new ReplacePatternSmartTag(
 						"ToLowerChar", "Converts specified chars from value of specified match group to lowercase.",
-						SmartTagType.MatchUnique,
+						SmartTagType.PerMatch,
 						(context, options) => ToUpperChar(context, options, Char.ToLower)),
 
 
@@ -79,11 +79,11 @@ namespace Replacer.Business.Engine
 		}
 
 		/// <summary>
-		/// Resets all FileUnique type tags.
+		/// Resets all PerFile type tags.
 		/// </summary>
 		public static void ResetFileTags()
 		{
-			foreach (ReplacePatternSmartTag tag in Tags.Values.Where(t => t.Type == SmartTagType.FileUnique))
+			foreach (ReplacePatternSmartTag tag in Tags.Values.Where(t => t.Type == SmartTagType.PerFile))
 			{
 				tag.Reset();
 			}

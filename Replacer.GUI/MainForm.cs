@@ -22,7 +22,7 @@ namespace Replacer.GUI
 
 		#region INNER TYPES
 
-		public class ValueItem
+	    private class ValueItem
 		{
 			public object Value { get; set; }
 			public string DisplayText { get; set; }
@@ -131,7 +131,7 @@ namespace Replacer.GUI
 			{
 				dialog.AddExtension = true;
 				dialog.DefaultExt = "rpproj";
-				dialog.Filter = "Replacer project (*.rpproj)|*.rpproj|All files (*.*)|*.*";
+				dialog.Filter = @"Replacer project (*.rpproj)|*.rpproj|All files (*.*)|*.*";
 				dialog.OverwritePrompt = true;
 
 				// Show dialog:
@@ -161,7 +161,7 @@ namespace Replacer.GUI
 			{
 				dialog.AddExtension = true;
 				dialog.DefaultExt = "rpproj";
-				dialog.Filter = "Replacer project (*.rpproj)|*.rpproj|All files (*.*)|*.*";
+				dialog.Filter = @"Replacer project (*.rpproj)|*.rpproj|All files (*.*)|*.*";
 				
 				// Show dialog:
 				if (dialog.ShowDialog(this) == DialogResult.OK)
@@ -209,15 +209,11 @@ namespace Replacer.GUI
 				// Set wait cursor:
 				Cursor.Current = Cursors.WaitCursor;
 
-				// Create replace parameters:
-				ReplaceParameters parameters = new ReplaceParameters();
-				parameters.FileCrawlerParameters.PathInfoList = this.pathList.ToList();
-				parameters.ReplacePatterns = this.patternList.ToList();
-
 				// Process:
 				using (ProcessingForm form = new ProcessingForm())
 				{
-					form.ReplaceParameters = parameters;
+					form.ReplacePatterns = this.patternList;
+                    form.FileCrawlerParameters = new FileCrawlerParameters{PathInfoList = this.pathList.ToList()};
 					form.ShowDialog(this);
 				}
 			}

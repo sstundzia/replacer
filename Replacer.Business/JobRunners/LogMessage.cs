@@ -1,6 +1,6 @@
 using System;
 
-namespace Replacer.Business.Engine
+namespace Replacer.Business.JobRunners
 {
 	public class LogMessage
 	{

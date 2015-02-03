@@ -45,14 +45,15 @@
     <Compile Include="Crawler\FileNamePatternType.cs" />
     <Compile Include="Crawler\IFileCrawlerObserver.cs" />
     <Compile Include="Engine\AllAvailableSmartTags.cs" />
+    <Compile Include="Engine\ReplacePatternWrapper.cs" />
+    <Compile Include="JobRunners\IJobRunnerObserver.cs" />
+    <Compile Include="JobRunners\JobRunner.cs" />
     <Compile Include="Engine\ReplacePattern.cs" />
     <Compile Include="Engine\ReplacePatternSmartTag.cs" />
-    <Compile Include="Engine\Replacer.cs" />
-    <Compile Include="Engine\IReplacerObserver.cs" />
-    <Compile Include="Engine\LogMessage.cs" />
+    <Compile Include="Engine\ReplacerEngine.cs" />
+    <Compile Include="JobRunners\LogMessage.cs" />
     <Compile Include="Crawler\FileFolderPath.cs" />
     <Compile Include="Engine\ReplaceType.cs" />
-    <Compile Include="Engine\ReplaceParameters.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ReplacerProject.cs" />
   </ItemGroup>
