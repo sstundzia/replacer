@@ -50,7 +50,10 @@ namespace Replacer.Business.Engine
         /// <param name="input">The input.</param>
         /// <returns></returns>
 	    public string ProcessString(string input)
-	    {
+        {
+            if (input == null)
+                throw new ArgumentNullException("input");
+
             // Reset file tags:
             AllAvailableSmartTags.ResetFileTags();
 
